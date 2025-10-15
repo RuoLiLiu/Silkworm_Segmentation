@@ -1,0 +1,361 @@
+exp name: SilkwormSeg
+--------------------------------------------------------------------------------
+
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  
+                                                   Name    Self CPU %      Self CPU   CPU total %     CPU total  CPU time avg    # of Calls  
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  
+                                        model_inference        24.21%       3.697ms       100.00%      15.269ms      15.269ms             1  
+                                      aten::convolution         2.76%     421.000us        35.76%       5.460ms      61.348us            89  
+                                           aten::conv2d         1.60%     245.000us        34.03%       5.196ms      61.129us            85  
+                                     aten::_convolution         3.22%     491.000us        33.11%       5.055ms      56.798us            89  
+                                             cudaMalloc        21.44%       3.274ms        21.44%       3.274ms      99.212us            33  
+                                aten::cudnn_convolution        11.15%       1.702ms        16.48%       2.516ms      39.937us            63  
+                                       cudaLaunchKernel         8.23%       1.257ms         8.23%       1.257ms       2.870us           438  
+                                              aten::mul         2.97%     454.000us         7.78%       1.188ms      22.846us            52  
+                                aten::_conv_depthwise2d         1.28%     195.000us         6.80%       1.038ms      47.182us            22  
+                                              aten::add         2.03%     310.000us         5.57%     850.000us      21.795us            39  
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  
+Self CPU time total: 15.269ms
+
+--------------------------------------------------------------------------------
+模型实际前向传播的 FLOPs: 855.498M, Parameters: 325.233K 
+Total Parameters: 0.67M,             Trainable Parameters: 0.67M 
+模型定义了的参数占用内存: 2.55 MB 
+推理torch.Size([1, 3, 256, 256])时最大内存使用: 158.23 MB 
+输入数据torch.Size([1, 3, 256, 256])占用内存: 0.75 MB 
+总推理内存（模型参数+输入数据+推理内存）占用: 161.53 MB 
+--------------------------------------------------------------------------------
+Test time: 0:01:12
+1351 imgs' inference time: 8012.54 ms
+Inference time per image: 5.93 ms
+Loss: 0.1921 	IoU: 80.74% 	Dice: 88.96% 	HD95: 1.9573 
+F1: 88.96% 	AP: 89.85% 	AP50: 87.32% 	AP95: 92.37% 
+--------------------------------------------------------------------------------
+Model:
+SilkwormSeg(
+  (encoder_layers): ModuleDict(
+    (0): ModuleList(
+      (0): Sequential(
+        (0): Conv2d(3, 16, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1))
+        (1): GELU(approximate='none')
+        (2): RepCAM(
+          (rep_ca): ChannelAttention(
+            (avg_pool): AdaptiveAvgPool2d(output_size=1)
+            (max_pool): AdaptiveMaxPool2d(output_size=1)
+            (fc1): Conv2d(16, 1, kernel_size=(1, 1), stride=(1, 1))
+            (relu): GELU(approximate='none')
+            (fc2): Conv2d(1, 16, kernel_size=(1, 1), stride=(1, 1))
+            (sigmoid): Sigmoid()
+          )
+          (rep_sa): SpatialAttention(
+            (conv): Conv2d(2, 1, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+            (sigmoid): Sigmoid()
+          )
+        )
+        (3): InvertedResidualBlock(
+          (ib): Residual(
+            (m): Sequential(
+              (0): Conv2d(16, 16, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=16)
+              (1): Conv2d(16, 32, kernel_size=(1, 1), stride=(1, 1))
+              (2): GELU(approximate='none')
+              (3): Conv2d(32, 16, kernel_size=(1, 1), stride=(1, 1))
+            )
+          )
+        )
+      )
+    )
+    (1): ModuleList(
+      (0): Sequential(
+        (0): Conv2d(16, 32, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1), groups=16)
+        (1): GELU(approximate='none')
+        (2): RepCAM(
+          (rep_ca): ChannelAttention(
+            (avg_pool): AdaptiveAvgPool2d(output_size=1)
+            (max_pool): AdaptiveMaxPool2d(output_size=1)
+            (fc1): Conv2d(32, 2, kernel_size=(1, 1), stride=(1, 1))
+            (relu): GELU(approximate='none')
+            (fc2): Conv2d(2, 32, kernel_size=(1, 1), stride=(1, 1))
+            (sigmoid): Sigmoid()
+          )
+          (rep_sa): SpatialAttention(
+            (conv): Conv2d(2, 1, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+            (sigmoid): Sigmoid()
+          )
+        )
+        (3): InvertedResidualBlock(
+          (ib): Residual(
+            (m): Sequential(
+              (0): Conv2d(32, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=32)
+              (1): Conv2d(32, 64, kernel_size=(1, 1), stride=(1, 1))
+              (2): GELU(approximate='none')
+              (3): Conv2d(64, 32, kernel_size=(1, 1), stride=(1, 1))
+            )
+          )
+        )
+      )
+    )
+    (2): ModuleList(
+      (0): Sequential(
+        (0): Conv2d(32, 64, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1), groups=32)
+        (1): GELU(approximate='none')
+        (2): RepCAM(
+          (rep_ca): ChannelAttention(
+            (avg_pool): AdaptiveAvgPool2d(output_size=1)
+            (max_pool): AdaptiveMaxPool2d(output_size=1)
+            (fc1): Conv2d(64, 4, kernel_size=(1, 1), stride=(1, 1))
+            (relu): GELU(approximate='none')
+            (fc2): Conv2d(4, 64, kernel_size=(1, 1), stride=(1, 1))
+            (sigmoid): Sigmoid()
+          )
+          (rep_sa): SpatialAttention(
+            (conv): Conv2d(2, 1, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+            (sigmoid): Sigmoid()
+          )
+        )
+        (3): InvertedResidualBlock(
+          (ib): Residual(
+            (m): Sequential(
+              (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=64)
+              (1): Conv2d(64, 128, kernel_size=(1, 1), stride=(1, 1))
+              (2): GELU(approximate='none')
+              (3): Conv2d(128, 64, kernel_size=(1, 1), stride=(1, 1))
+            )
+          )
+        )
+      )
+    )
+  )
+  (patch_embed): PatchEmbed(
+    (proj): Conv2d(64, 128, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1))
+    (norm): LayerNorm((128,), eps=1e-05, elementwise_affine=True)
+  )
+  (bottleneck): ModuleList(
+    (0): KANBlock(
+      (drop_path): Identity()
+      (norm2): LayerNorm((128,), eps=1e-05, elementwise_affine=True)
+      (layer): KANLayer(
+        (fc1): KANLinear(
+          (base_activation): SiLU()
+        )
+        (fc2): KANLinear(
+          (base_activation): SiLU()
+        )
+        (dwconv_1): DW_bn_relu(
+          (dwconv): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=128)
+          (relu): GELU(approximate='none')
+        )
+        (dwconv_2): DW_bn_relu(
+          (dwconv): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=128)
+          (relu): GELU(approximate='none')
+        )
+        (drop): Dropout(p=0.0, inplace=False)
+      )
+    )
+  )
+  (norm): LayerNorm((128,), eps=1e-05, elementwise_affine=True)
+  (decoder_layers): ModuleList(
+    (0): Sequential(
+      (0): Conv2d(128, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (1): GELU(approximate='none')
+      (2): RepCAM(
+        (rep_ca): ChannelAttention(
+          (avg_pool): AdaptiveAvgPool2d(output_size=1)
+          (max_pool): AdaptiveMaxPool2d(output_size=1)
+          (fc1): Conv2d(64, 4, kernel_size=(1, 1), stride=(1, 1))
+          (relu): GELU(approximate='none')
+          (fc2): Conv2d(4, 64, kernel_size=(1, 1), stride=(1, 1))
+          (sigmoid): Sigmoid()
+        )
+        (rep_sa): SpatialAttention(
+          (conv): Conv2d(2, 1, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          (sigmoid): Sigmoid()
+        )
+      )
+      (3): InvertedResidualBlock(
+        (ib): Residual(
+          (m): Sequential(
+            (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=64)
+            (1): Conv2d(64, 128, kernel_size=(1, 1), stride=(1, 1))
+            (2): GELU(approximate='none')
+            (3): Conv2d(128, 64, kernel_size=(1, 1), stride=(1, 1))
+          )
+        )
+      )
+    )
+    (1): Sequential(
+      (0): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (1): GELU(approximate='none')
+      (2): RepCAM(
+        (rep_ca): ChannelAttention(
+          (avg_pool): AdaptiveAvgPool2d(output_size=1)
+          (max_pool): AdaptiveMaxPool2d(output_size=1)
+          (fc1): Conv2d(32, 2, kernel_size=(1, 1), stride=(1, 1))
+          (relu): GELU(approximate='none')
+          (fc2): Conv2d(2, 32, kernel_size=(1, 1), stride=(1, 1))
+          (sigmoid): Sigmoid()
+        )
+        (rep_sa): SpatialAttention(
+          (conv): Conv2d(2, 1, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          (sigmoid): Sigmoid()
+        )
+      )
+      (3): InvertedResidualBlock(
+        (ib): Residual(
+          (m): Sequential(
+            (0): Conv2d(32, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=32)
+            (1): Conv2d(32, 64, kernel_size=(1, 1), stride=(1, 1))
+            (2): GELU(approximate='none')
+            (3): Conv2d(64, 32, kernel_size=(1, 1), stride=(1, 1))
+          )
+        )
+      )
+    )
+    (2): Sequential(
+      (0): Conv2d(32, 16, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (1): GELU(approximate='none')
+      (2): RepCAM(
+        (rep_ca): ChannelAttention(
+          (avg_pool): AdaptiveAvgPool2d(output_size=1)
+          (max_pool): AdaptiveMaxPool2d(output_size=1)
+          (fc1): Conv2d(16, 1, kernel_size=(1, 1), stride=(1, 1))
+          (relu): GELU(approximate='none')
+          (fc2): Conv2d(1, 16, kernel_size=(1, 1), stride=(1, 1))
+          (sigmoid): Sigmoid()
+        )
+        (rep_sa): SpatialAttention(
+          (conv): Conv2d(2, 1, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          (sigmoid): Sigmoid()
+        )
+      )
+      (3): InvertedResidualBlock(
+        (ib): Residual(
+          (m): Sequential(
+            (0): Conv2d(16, 16, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=16)
+            (1): Conv2d(16, 32, kernel_size=(1, 1), stride=(1, 1))
+            (2): GELU(approximate='none')
+            (3): Conv2d(32, 16, kernel_size=(1, 1), stride=(1, 1))
+          )
+        )
+      )
+    )
+    (3): Sequential(
+      (0): Conv2d(16, 16, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (1): GELU(approximate='none')
+      (2): RepCAM(
+        (rep_ca): ChannelAttention(
+          (avg_pool): AdaptiveAvgPool2d(output_size=1)
+          (max_pool): AdaptiveMaxPool2d(output_size=1)
+          (fc1): Conv2d(16, 1, kernel_size=(1, 1), stride=(1, 1))
+          (relu): GELU(approximate='none')
+          (fc2): Conv2d(1, 16, kernel_size=(1, 1), stride=(1, 1))
+          (sigmoid): Sigmoid()
+        )
+        (rep_sa): SpatialAttention(
+          (conv): Conv2d(2, 1, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          (sigmoid): Sigmoid()
+        )
+      )
+      (3): InvertedResidualBlock(
+        (ib): Residual(
+          (m): Sequential(
+            (0): Conv2d(16, 16, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=16)
+            (1): Conv2d(16, 32, kernel_size=(1, 1), stride=(1, 1))
+            (2): GELU(approximate='none')
+            (3): Conv2d(32, 16, kernel_size=(1, 1), stride=(1, 1))
+          )
+        )
+      )
+    )
+  )
+  (path): ResPath(
+    (res_path): Sequential(
+      (0): PathStage(
+        (p5_down_channel): Conv2d(64, 64, kernel_size=(1, 1), stride=(1, 1))
+        (p4_down_channel): Conv2d(32, 64, kernel_size=(1, 1), stride=(1, 1))
+        (p3_down_channel): Conv2d(16, 64, kernel_size=(1, 1), stride=(1, 1))
+        (p4_level_connection): Conv2d(32, 64, kernel_size=(1, 1), stride=(1, 1))
+        (p4_down_sample): Conv2d(64, 64, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1), groups=64)
+        (p5_down_sample): Conv2d(64, 64, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1), groups=64)
+        (p4_upsample): Upsample(scale_factor=2.0, mode='nearest')
+        (p3_upsample): Upsample(scale_factor=2.0, mode='nearest')
+        (conv4_up): Sequential(
+          (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=64)
+          (1): Conv2d(64, 64, kernel_size=(1, 1), stride=(1, 1))
+        )
+        (conv3_up): Sequential(
+          (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=64)
+          (1): Conv2d(64, 64, kernel_size=(1, 1), stride=(1, 1))
+        )
+        (conv4_down): Sequential(
+          (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=64)
+          (1): Conv2d(64, 64, kernel_size=(1, 1), stride=(1, 1))
+        )
+        (conv5_down): Sequential(
+          (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=64)
+          (1): Conv2d(64, 64, kernel_size=(1, 1), stride=(1, 1))
+        )
+        (conv3_out): Conv2d(64, 16, kernel_size=(1, 1), stride=(1, 1))
+        (conv4_out): Conv2d(64, 32, kernel_size=(1, 1), stride=(1, 1))
+        (conv5_out): Conv2d(64, 64, kernel_size=(1, 1), stride=(1, 1))
+        (p4_w1_relu): GELU(approximate='none')
+        (p3_w1_relu): GELU(approximate='none')
+        (p4_w2_relu): GELU(approximate='none')
+        (p5_w2_relu): GELU(approximate='none')
+        (swish): Swish()
+      )
+      (1): PathStage(
+        (p4_down_sample): Conv2d(64, 64, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1), groups=64)
+        (p5_down_sample): Conv2d(64, 64, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1), groups=64)
+        (p4_upsample): Upsample(scale_factor=2.0, mode='nearest')
+        (p3_upsample): Upsample(scale_factor=2.0, mode='nearest')
+        (conv4_up): Sequential(
+          (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=64)
+          (1): Conv2d(64, 64, kernel_size=(1, 1), stride=(1, 1))
+        )
+        (conv3_up): Sequential(
+          (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=64)
+          (1): Conv2d(64, 64, kernel_size=(1, 1), stride=(1, 1))
+        )
+        (conv4_down): Sequential(
+          (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=64)
+          (1): Conv2d(64, 64, kernel_size=(1, 1), stride=(1, 1))
+        )
+        (conv5_down): Sequential(
+          (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=64)
+          (1): Conv2d(64, 64, kernel_size=(1, 1), stride=(1, 1))
+        )
+        (conv3_out): Conv2d(64, 16, kernel_size=(1, 1), stride=(1, 1))
+        (conv4_out): Conv2d(64, 32, kernel_size=(1, 1), stride=(1, 1))
+        (conv5_out): Conv2d(64, 64, kernel_size=(1, 1), stride=(1, 1))
+        (p4_w1_relu): GELU(approximate='none')
+        (p3_w1_relu): GELU(approximate='none')
+        (p4_w2_relu): GELU(approximate='none')
+        (p5_w2_relu): GELU(approximate='none')
+        (swish): Swish()
+      )
+    )
+  )
+  (upconv0): Sequential(
+    (0): ConvTranspose2d(128, 64, kernel_size=(2, 2), stride=(2, 2))
+    (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    (2): GELU(approximate='none')
+  )
+  (upconv1): Sequential(
+    (0): ConvTranspose2d(64, 32, kernel_size=(2, 2), stride=(2, 2))
+    (1): BatchNorm2d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    (2): GELU(approximate='none')
+  )
+  (upconv2): Sequential(
+    (0): ConvTranspose2d(32, 16, kernel_size=(2, 2), stride=(2, 2))
+    (1): BatchNorm2d(16, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    (2): GELU(approximate='none')
+  )
+  (upconv3): Sequential(
+    (0): ConvTranspose2d(16, 16, kernel_size=(2, 2), stride=(2, 2))
+    (1): BatchNorm2d(16, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    (2): GELU(approximate='none')
+  )
+  (final): Conv2d(16, 1, kernel_size=(1, 1), stride=(1, 1))
+)
+--------------------------------------------------------------------------------
+
